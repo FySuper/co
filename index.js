@@ -22,27 +22,31 @@ module.exports = co;
 
 function co(fn) {
   var isGenFun = isGeneratorFunction(fn);
-
+  // ES6 新特性
+  // 生成器 generator
+  // isGeneratorFunction 判断是否是生成器
   return function (done) {
-    var ctx = this;
 
+    var ctx = this;
     // in toThunk() below we invoke co()
     // with a generator, so optimize for
     // this case
     var gen = fn;
+    //        fn : 传入的fn
 
     // we only need to parse the arguments
     // if gen is a generator function.
     if (isGenFun) {
-      var args = slice.call(arguments), len = args.length;
-      var hasCallback = len && 'function' == typeof args[len - 1];
-      done = hasCallback ? args.pop() : error;
-      gen = fn.apply(this, args);
+      //是生成器时 isGenFun true
+      var args = slice.call(arguments), len = args.length;//arguments -> done
+      var hasCallback = len && 'function' == typeof args[len - 1];// 有len的同时 是否有回调fn
+      done = hasCallback ? args.pop() : error; // done : 存在回调的时候抓出cb-fn 否则为  error 
+      gen = fn.apply(this, args); // 用这里面this和参数 去调用传入的fn 
     } else {
-      done = done || error;
+      done = done || error; //不是生成器则 done = done || error
     }
 
-    next();
+    next();// ^ ^
 
     // #92
     // wrap the callback in a setImmediate
