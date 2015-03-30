@@ -46,22 +46,22 @@ function co(fn) {
       done = done || error; //不是生成器则 done = done || error
     }
 
-    next();// ^ ^
+    next();// 调用下面的next
 
     // #92
     // wrap the callback in a setImmediate
     // so that any of its errors aren't caught by `co`
-    function exit(err, res) {
+    function exit(err, res) {//退出
       setImmediate(function(){
-        done.call(ctx, err, res);
+        done.call(ctx, err, res);// 用 ctx 去 call done (err,res);
       });
     }
 
-    function next(err, res) {
+    function next(err, res) {//next
       var ret;
 
       // multiple args
-      if (arguments.length > 2) res = slice.call(arguments, 1);
+      if (arguments.length > 2) res = slice.call(arguments, 1); // 传入的参数>2时 取第一个为res
 
       // error
       if (err) {
@@ -75,17 +75,17 @@ function co(fn) {
       // ok
       if (!err) {
         try {
-          ret = gen.next(res);
+          ret = gen.next(res);// fn.next(res)
         } catch (e) {
           return exit(e);
         }
       }
 
       // done
-      if (ret.done) return exit(null, ret.value);
+      if (ret.done) return exit(null, ret.value); // tui chu
 
       // normalize
-      ret.value = toThunk(ret.value, ctx);
+      ret.value = toThunk(ret.value, ctx); //
 
       // run
       if ('function' == typeof ret.value) {
